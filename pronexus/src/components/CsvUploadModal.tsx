@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import {
   X, Upload, FileSpreadsheet, Loader2, CheckCircle2,
-  XCircle, AlertTriangle, Trash2, Download, ArrowLeft
+  XCircle, AlertTriangle, Trash2, Download, ArrowLeft, Copy, Check
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -87,6 +87,7 @@ export const CsvUploadModal: React.FC<CsvUploadModalProps> = ({
   const [summary, setSummary] = useState({ total: 0, success: 0, failed: 0 });
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [copied, setCopied] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const processFile = useCallback((file: File) => {
@@ -191,28 +192,73 @@ export const CsvUploadModal: React.FC<CsvUploadModalProps> = ({
       setResults(data.results || []);
       setSummary(data.summary || { total: 0, success: 0, failed: 0 });
       setState('results');
-      if (data.summary?.success > 0) onSuccess();
     } catch (err: any) {
       setUploadError(err.message || 'Failed to create students');
       setState('preview');
     }
   };
 
-  const downloadCredentials = () => {
+  const buildCsvContent = () => {
     const successRows = results.filter(r => r.status === 'success');
-    if (successRows.length === 0) return;
+    if (successRows.length === 0) return '';
     const header = 'Name,Email,Roll No.,Temporary Password';
     const rows = successRows.map(
       r => `"${r.name}","${r.email}","${r.rollNo}","${r.tempPassword}"`
     );
-    const csv = [header, ...rows].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
+    return '\uFEFF' + [header, ...rows].join('\r\n');
+  };
+
+  const downloadCredentials = async () => {
+    const csv = buildCsvContent();
+    if (!csv) return;
+    const fileName = `${batchName.replace(/\s+/g, '_')}_credentials.csv`;
+
+    // Modern Chrome/Edge — uses native Save dialog
+    if ('showSaveFilePicker' in window) {
+      try {
+        const handle = await (window as any).showSaveFilePicker({
+          suggestedName: fileName,
+          types: [{
+            description: 'CSV File',
+            accept: { 'text/csv': ['.csv'] },
+          }],
+        });
+        const writable = await handle.createWritable();
+        await writable.write(csv);
+        await writable.close();
+        return;
+      } catch (e: any) {
+        if (e.name === 'AbortError') return; // user cancelled
+      }
+    }
+
+    // Fallback for Firefox / older browsers
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${batchName.replace(/\s+/g, '_')}_credentials.csv`;
+    a.download = fileName;
+    a.style.display = 'none';
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, 1000);
+  };
+
+  const copyCredentials = () => {
+    const successRows = results.filter(r => r.status === 'success');
+    if (successRows.length === 0) return;
+    const header = 'Name\tEmail\tRoll No.\tTemporary Password';
+    const rows = successRows.map(
+      r => `${r.name}\t${r.email}\t${r.rollNo}\t${r.tempPassword}`
+    );
+    const text = [header, ...rows].join('\n');
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    });
   };
 
   const validCount = students.filter(s => s.errors.length === 0).length;
@@ -477,17 +523,30 @@ export const CsvUploadModal: React.FC<CsvUploadModalProps> = ({
             {/* Footer */}
             <div className="p-4 border-t border-outline-variant/10 flex justify-between items-center flex-shrink-0">
               {summary.success > 0 && (
-                <button
-                  onClick={downloadCredentials}
-                  className="flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-widest text-primary bg-primary-fixed/20 hover:bg-primary-fixed/30 rounded transition-colors"
-                >
-                  <Download size={14} />
-                  Download Credentials Sheet
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={downloadCredentials}
+                    className="flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-widest text-primary bg-primary-fixed/20 hover:bg-primary-fixed/30 rounded transition-colors"
+                  >
+                    <Download size={14} />
+                    Download CSV
+                  </button>
+                  <button
+                    onClick={copyCredentials}
+                    className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-widest rounded transition-all ${
+                      copied
+                        ? 'text-primary bg-primary-fixed/30'
+                        : 'text-on-surface-variant bg-surface-container-high hover:bg-surface-container-highest'
+                    }`}
+                  >
+                    {copied ? <Check size={14} /> : <Copy size={14} />}
+                    {copied ? 'Copied!' : 'Copy to Clipboard'}
+                  </button>
+                </div>
               )}
               <div className="ml-auto">
                 <button
-                  onClick={onClose}
+                  onClick={() => { if (summary.success > 0) onSuccess(); onClose(); }}
                   className="px-6 py-2 primary-gradient text-white text-xs font-bold uppercase tracking-widest rounded ghost-shadow"
                 >
                   Done
