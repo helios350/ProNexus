@@ -1,0 +1,164 @@
+@import "tailwindcss";
+
+@theme {
+  --color-outline: #777586;
+  --color-inverse-primary: #c3c0ff;
+  --color-on-tertiary-fixed: #360f00;
+  --color-surface-container: #eceef0;
+  --color-surface-dim: #d8dadc;
+  --color-on-secondary-fixed: #001a42;
+  --color-surface-bright: #f7f9fb;
+  --color-secondary-container: #2170e4;
+  --color-on-background: #191c1e;
+  --color-tertiary-container: #8f3400;
+  --color-surface-container-lowest: #ffffff;
+  --color-tertiary-fixed: #ffdbcd;
+  --color-inverse-on-surface: #eff1f3;
+  --color-on-secondary-fixed-variant: #004395;
+  --color-primary: #2a14b4;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #4338ca;
+  --color-outline-variant: #c7c4d7;
+  --color-on-primary-fixed: #100069;
+  --color-surface: #f7f9fb;
+  --color-error-container: #ffdad6;
+  --color-error: #ba1a1a;
+  --color-surface-container-high: #e6e8ea;
+  --color-on-tertiary-fixed-variant: #7d2d00;
+  --color-surface-container-highest: #e0e3e5;
+  --color-on-primary-fixed-variant: #372abf;
+  --color-on-surface-variant: #464554;
+  --color-on-secondary: #ffffff;
+  --color-surface-container-low: #f2f4f6;
+  --color-secondary-fixed-dim: #adc6ff;
+  --color-secondary-fixed: #d8e2ff;
+  --color-on-primary-container: #c1beff;
+  --color-tertiary-fixed-dim: #ffb597;
+  --color-surface-tint: #5148d7;
+  --color-on-tertiary: #ffffff;
+  --color-secondary: #0058be;
+  --color-on-surface: #191c1e;
+  --color-background: #f7f9fb;
+  --color-surface-variant: #e0e3e5;
+  --color-primary-fixed: #e3dfff;
+  --color-tertiary: #692400;
+  --color-on-tertiary-container: #ffb393;
+  --color-inverse-surface: #2d3133;
+  --color-primary-fixed-dim: #c3c0ff;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000a;
+  --color-on-secondary-container: #fefcff;
+  
+  --font-headline: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+}
+
+/* ═══════════════════════════════════════════════
+   DARK MODE — Material Design 3 Dark Scheme
+   ═══════════════════════════════════════════════ */
+.dark {
+  --color-primary: #c3c0ff;
+  --color-on-primary: #1d0099;
+  --color-primary-container: #4338ca;
+  --color-on-primary-container: #e3dfff;
+
+  --color-secondary: #adc6ff;
+  --color-on-secondary: #002e6c;
+  --color-secondary-container: #004395;
+  --color-on-secondary-container: #d8e2ff;
+
+  --color-tertiary: #ffb597;
+  --color-on-tertiary: #561900;
+  --color-tertiary-container: #7d2d00;
+  --color-on-tertiary-container: #ffdbcd;
+
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+
+  --color-surface: #111318;
+  --color-on-surface: #e2e2e9;
+  --color-surface-variant: #46464f;
+  --color-on-surface-variant: #c7c5d0;
+  --color-surface-dim: #111318;
+  --color-surface-bright: #37393e;
+  --color-surface-container-lowest: #0c0e13;
+  --color-surface-container-low: #191b22;
+  --color-surface-container: #1d1f26;
+  --color-surface-container-high: #282a31;
+  --color-surface-container-highest: #33353c;
+
+  --color-outline: #908f9a;
+  --color-outline-variant: #46464f;
+  --color-surface-tint: #c3c0ff;
+
+  --color-on-background: #e2e2e9;
+  --color-background: #111318;
+  --color-inverse-surface: #e2e2e9;
+  --color-inverse-on-surface: #2e3036;
+  --color-inverse-primary: #5148d7;
+
+  --color-primary-fixed: #e3dfff;
+  --color-primary-fixed-dim: #c3c0ff;
+  --color-on-primary-fixed: #100069;
+  --color-on-primary-fixed-variant: #372abf;
+
+  --color-secondary-fixed: #d8e2ff;
+  --color-secondary-fixed-dim: #adc6ff;
+  --color-on-secondary-fixed: #001a42;
+  --color-on-secondary-fixed-variant: #004395;
+
+  --color-tertiary-fixed: #ffdbcd;
+  --color-tertiary-fixed-dim: #ffb597;
+  --color-on-tertiary-fixed: #360f00;
+  --color-on-tertiary-fixed-variant: #7d2d00;
+
+  color-scheme: dark;
+}
+
+/* Smooth transitions for theme switching + reduced base scale */
+html {
+  font-size: 14px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+  font-size: 0.875rem;
+}
+
+@layer utilities {
+  .architectural-grid {
+    background-size: 40px 40px;
+    background-image: 
+      linear-gradient(to right, rgba(226, 232, 240, 0.5) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(226, 232, 240, 0.5) 1px, transparent 1px);
+  }
+  .dark .architectural-grid {
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  }
+  .input-focus-ring:focus {
+    outline: none;
+    border: 1px solid var(--color-secondary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+  .primary-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
+  }
+  .ghost-shadow {
+    box-shadow: 0 4px 20px -2px rgba(25, 28, 30, 0.04), 0 2px 8px -2px rgba(25, 28, 30, 0.02);
+  }
+  .dark .ghost-shadow {
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3), 0 2px 8px -2px rgba(0, 0, 0, 0.2);
+  }
+}

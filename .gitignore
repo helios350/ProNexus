@@ -1,0 +1,51 @@
+# ─── Dependencies ───
+node_modules/
+
+# ─── Build output ───
+dist/
+dist-ssr/
+*.local
+
+# ─── Environment variables (API keys, secrets) ───
+.env
+.env.*
+!.env.example
+
+# ─── Logs ───
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ─── Editor / IDE ───
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ─── OS files ───
+.DS_Store
+Thumbs.db
+
+# ─── Stitch / AI tooling (not part of source) ───
+stitch-skills-0.1/
+stitch.json
+queue/
+
+# ─── Temp / scratch files ───
+pronexus/temp/
+temp_source.html
+
+# ─── Planning docs (keep source code only) ───
+admin-prompt.md
+next-prompt.md
+stitch_workflow.md
+backend_implementation_plan.md
+implementation_plan.md
+task.md
+pronexus/implementation_plan_new.md
+pronexus/audit_report.md
